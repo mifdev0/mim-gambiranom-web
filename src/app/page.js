@@ -333,8 +333,11 @@ export default async function Home() {
           {kepalaMadrasah && (
             <div class="guru-kepala anim fade-up">
               <div class="guru-kepala-photo">
-                {kepalaMadrasah.photo_url && <img src={kepalaMadrasah.photo_url} alt={kepalaMadrasah.name} />}
-                <div class="guru-kepala-initial">{kepalaMadrasah.initial}</div>
+                {kepalaMadrasah.photo_url ? (
+                  <img src={kepalaMadrasah.photo_url} alt={kepalaMadrasah.name} />
+                ) : (
+                  <div class="guru-kepala-initial">{kepalaMadrasah.initial}</div>
+                )}
               </div>
               <div class="guru-kepala-info">
                 <div class="badge"><i class="bx bxs-crown"></i> Kepala Madrasah</div>
@@ -348,8 +351,11 @@ export default async function Home() {
             {regularGuru.map((guru, idx) => (
               <div key={idx} class="guru-card anim fade-up" style={{ animationDelay: `${(idx + 1) * 0.05}s` }}>
                 <div class={`guru-card-photo ${guru.gradient_class}`}>
-                  {guru.photo_url && <img src={guru.photo_url} alt={guru.name} />}
-                  <div class="guru-init">{guru.initial}</div>
+                  {guru.photo_url ? (
+                    <img src={guru.photo_url} alt={guru.name} />
+                  ) : (
+                    <div class="guru-init">{guru.initial}</div>
+                  )}
                 </div>
                 <div class="guru-card-info">
                   <h3>{guru.name}</h3>
