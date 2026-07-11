@@ -157,9 +157,9 @@ export default async function Home() {
         <div class="container">
           <div class="hero-inner">
             <div class="hero-content">
-              <div class="hero-tag">
-                <span class="hero-tag-dot"></span>
-                {settings.school_name}
+              <div className="hero-tag">
+                <i className="bx bxs-graduation" style={{ color: 'var(--gold-light)', fontSize: '1.1rem' }}></i>
+                <span>{settings.school_name}</span>
               </div>
               <h1>{renderTitle(hero.title, hero.highlight_text)}</h1>
               <p class="hero-desc">{hero.description}</p>
