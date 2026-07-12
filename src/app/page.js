@@ -153,7 +153,7 @@ export default async function Home() {
           </a>
           <ul class="nav-menu" id="navMenu">
             <li><a href="#home">Home</a></li>
-            <li><a href="#program">Program</a></li>
+            <li><a href="#program">Ekstrakurikuler</a></li>
             <li><a href="#prestasi">Prestasi</a></li>
             <li><a href="#data">Data</a></li>
             <li><a href="#guru">Guru</a></li>
@@ -218,9 +218,9 @@ export default async function Home() {
       <section class="section programs" id="program">
         <div class="container">
           <div class="sec-head anim fade-up">
-            <div class="sec-label"><i class="bx bxs-star-half"></i> Keunggulan Kami</div>
-            <h2>Program Unggulan</h2>
-            <p>Program terbaik untuk membentuk karakter dan kecerdasan siswa secara menyeluruh.</p>
+            <div class="sec-label"><i class="bx bxs-star-half"></i> Ekstrakurikuler</div>
+            <h2>Ekstrakurikuler</h2>
+            <p>Kegiatan tambahan untuk mengembangkan minat, bakat, dan kreativitas siswa secara optimal.</p>
           </div>
 
           <div class="prog-grid">

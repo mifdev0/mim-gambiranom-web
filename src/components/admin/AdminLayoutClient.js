@@ -20,7 +20,7 @@ export default function AdminLayoutClient({ children }) {
   const navLinks = [
     { href: '/admin', label: 'Dashboard', icon: 'bx-grid-alt' },
     { href: '/admin/hero', label: 'Edit Hero', icon: 'bx-image' },
-    { href: '/admin/program', label: 'Program Unggulan', icon: 'bx-book-reader' },
+    { href: '/admin/program', label: 'Ekstrakurikuler', icon: 'bx-book-reader' },
     { href: '/admin/prestasi', label: 'Prestasi Siswa', icon: 'bx-trophy' },
     { href: '/admin/guru', label: 'Profil Guru', icon: 'bx-id-card' },
     { href: '/admin/data', label: 'Data Madrasah', icon: 'bx-bar-chart-alt-2' },

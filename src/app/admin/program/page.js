@@ -106,11 +106,11 @@ export default function AdminProgramPage() {
       if (editingId) {
         const { error } = await supabase.from('programs').update(payload).eq('id', editingId);
         if (error) throw error;
-        showToast('Program berhasil diupdate!', 'success');
+        showToast('Ekstrakurikuler berhasil diupdate!', 'success');
       } else {
         const { error } = await supabase.from('programs').insert([payload]);
         if (error) throw error;
-        showToast('Program berhasil ditambahkan!', 'success');
+        showToast('Ekstrakurikuler berhasil ditambahkan!', 'success');
       }
       setModalOpen(false);
       fetchPrograms();
@@ -120,11 +120,11 @@ export default function AdminProgramPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus program ini?')) return;
+    if (!confirm('Apakah Anda yakin ingin menghapus ekstrakurikuler ini?')) return;
     try {
       const { error } = await supabase.from('programs').delete().eq('id', id);
       if (error) throw error;
-      showToast('Program berhasil dihapus.', 'success');
+      showToast('Ekstrakurikuler berhasil dihapus.', 'success');
       fetchPrograms();
     } catch (err) {
       showToast(err.message, 'error');
@@ -141,16 +141,16 @@ export default function AdminProgramPage() {
       )}
 
       <div className={styles.pageHeader}>
-        <h3>Daftar Program</h3>
+        <h3>Daftar Ekstrakurikuler</h3>
         <button onClick={handleOpenAdd} className={`${styles.btnAction} ${styles.primary}`}>
-          <i className="bx bx-plus"></i> Tambah Program
+          <i className="bx bx-plus"></i> Tambah Ekstrakurikuler
         </button>
       </div>
 
       {loading ? (
-        <div className={styles.emptyState}><i className="bx bx-loader-alt bx-spin"></i><p>Memuat program...</p></div>
+        <div className={styles.emptyState}><i className="bx bx-loader-alt bx-spin"></i><p>Memuat ekstrakurikuler...</p></div>
       ) : programs.length === 0 ? (
-        <div className={styles.emptyState}><i className="bx bx-info-circle"></i><p>Tidak ada program unggulan.</p></div>
+        <div className={styles.emptyState}><i className="bx bx-info-circle"></i><p>Tidak ada ekstrakurikuler.</p></div>
       ) : (
         <div className={styles.tableWrapper}>
           <table className={styles.adminTable}>
@@ -158,7 +158,7 @@ export default function AdminProgramPage() {
               <tr>
                 <th>Urutan</th>
                 <th>Foto</th>
-                <th>Nama Program</th>
+                <th>Nama Ekstrakurikuler</th>
                 <th>Warna &amp; Icon</th>
                 <th>Deskripsi</th>
                 <th style={{ width: '100px' }}>Aksi</th>
@@ -205,7 +205,7 @@ export default function AdminProgramPage() {
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <div className={styles.modalHeader}>
-              <h3>{editingId ? 'Edit Program' : 'Tambah Program'}</h3>
+              <h3>{editingId ? 'Edit Ekstrakurikuler' : 'Tambah Ekstrakurikuler'}</h3>
               <button onClick={() => setModalOpen(false)} className={styles.btnCloseModal}>
                 <i className="bx bx-x"></i>
               </button>
@@ -213,7 +213,7 @@ export default function AdminProgramPage() {
             <form onSubmit={handleSubmit}>
               <div className={styles.modalBody}>
                 <div className={styles.formGroup}>
-                  <label>Nama Program</label>
+                  <label>Nama Ekstrakurikuler</label>
                   <input
                     type="text"
                     value={title}
@@ -228,7 +228,7 @@ export default function AdminProgramPage() {
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Jelaskan secara singkat mengenai program ini..."
+                    placeholder="Jelaskan secara singkat mengenai ekstrakurikuler ini..."
                     required
                   />
                 </div>
@@ -267,14 +267,14 @@ export default function AdminProgramPage() {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Foto Banner Program</label>
+                  <label>Foto Banner Ekstrakurikuler</label>
                   <div className={styles.uploadZone}>
                     {uploading ? (
                       <div className={styles.uploadSpinner}><i className="bx bx-loader-alt bx-spin"></i> Sedang mengupload...</div>
                     ) : (
                       <>
                         <i className="bx bx-cloud-upload"></i>
-                        <p>Klik untuk pilih foto banner program</p>
+                        <p>Klik untuk pilih foto banner ekstrakurikuler</p>
                         <span className={styles.uploadHint}>Format: JPG, PNG, WebP • Maks. 2MB</span>
                       </>
                     )}
