@@ -90,6 +90,11 @@ export default function AdminGuruPage() {
       setUploading(true);
       if (!e.target.files || e.target.files.length === 0) return;
       const file = e.target.files[0];
+      const MAX_SIZE = 2 * 1024 * 1024;
+      if (file.size > MAX_SIZE) {
+        showToast('Ukuran file terlalu besar! Maksimal 2MB.', 'error');
+        return;
+      }
       const ext = file.name.split('.').pop();
       const path = `guru/${Math.random().toString(36).substring(2)}.${ext}`;
 
@@ -98,7 +103,7 @@ export default function AdminGuruPage() {
 
       const { data } = supabase.storage.from('uploads').getPublicUrl(path);
       setPhotoUrl(data.publicUrl);
-      showToast('Foto berhasil diupload!', 'success');
+      showToast('File berhasil diupload! Klik "Simpan" untuk menyimpan.', 'info');
     } catch (err) {
       showToast(err.message, 'error');
     } finally {
@@ -156,8 +161,8 @@ export default function AdminGuruPage() {
   return (
     <div>
       {toast && (
-        <div className={`${styles.toast} ${toast.type === 'success' ? styles.success : styles.error}`}>
-          <i className={toast.type === 'success' ? 'bx bx-check-circle' : 'bx bx-error-circle'}></i>
+        <div className={`${styles.toast} ${toast.type === 'success' ? styles.success : toast.type === 'error' ? styles.error : styles.info}`}>
+          <i className={toast.type === 'success' ? 'bx bx-check-circle' : toast.type === 'error' ? 'bx bx-error-circle' : 'bx bx-info-circle'}></i>
           <span>{toast.message}</span>
         </div>
       )}
@@ -325,17 +330,24 @@ export default function AdminGuruPage() {
                 <div className={styles.formGroup}>
                   <label>Foto Guru (Opsional)</label>
                   <div className={styles.uploadZone}>
-                    <i className="bx bx-cloud-upload"></i>
-                    <p>{uploading ? 'Mengupload...' : 'Pilih file foto guru (Disarankan rasio kotak / 1:1)'}</p>
+                    {uploading ? (
+                      <div className={styles.uploadSpinner}><i className="bx bx-loader-alt bx-spin"></i> Sedang mengupload...</div>
+                    ) : (
+                      <>
+                        <i className="bx bx-cloud-upload"></i>
+                        <p>Klik untuk pilih foto guru (Rasio 1:1 disarankan)</p>
+                        <span className={styles.uploadHint}>Format: JPG, PNG, WebP • Maks. 2MB</span>
+                      </>
+                    )}
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/jpeg,image/png,image/webp"
                       onChange={handleUpload}
                       disabled={uploading}
                       style={{ display: 'none' }}
                       id="guruFile"
                     />
-                    <label htmlFor="guruFile" style={{ cursor: 'pointer', position: 'absolute', inset: 0 }}></label>
+                    <label htmlFor="guruFile" style={{ cursor: uploading ? 'not-allowed' : 'pointer', position: 'absolute', inset: 0 }}></label>
                   </div>
                   {photoUrl && (
                     <div className={styles.previewWrap}>

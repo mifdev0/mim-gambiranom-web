@@ -272,6 +272,22 @@
   color: var(--slate-500);
 }
 
+.uploadHint {
+  display: block;
+  font-size: 0.72rem !important;
+  color: var(--slate-400) !important;
+  margin-top: 4px;
+}
+
+.uploadSpinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--green-600);
+  font-weight: 600;
+}
+
 .previewWrap {
   margin-top: 14px;
   display: flex;
@@ -377,6 +393,10 @@
 
 .toast.error {
   background: #dc2626;
+}
+
+.toast.info {
+  background: #d97706;
 }
 
 @keyframes slideIn {

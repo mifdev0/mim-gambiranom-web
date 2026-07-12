@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import styles from '../adminPage.module.css';
 
+const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+
 export default function EditHeroPage() {
   const [title, setTitle] = useState('');
   const [highlightText, setHighlightText] = useState('');
@@ -18,6 +20,7 @@ export default function EditHeroPage() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null);
+  const [loadingData, setLoadingData] = useState(true);
 
   useEffect(() => {
     async function getHeroSettings() {
@@ -35,10 +38,11 @@ export default function EditHeroPage() {
         setHeroImageMain(data.hero_image_main || '');
         setHeroImageFloat1(data.hero_image_float1 || '');
         setHeroImageFloat2(data.hero_image_float2 || '');
-        setStatValue(data.stat_value || 155);
+        setStatValue(data.stat_value ?? 155);
         setStatLabel(data.stat_label || 'Siswa');
         setStatSubText(data.stat_sub_text || 'Tahun Ajaran Aktif');
       }
+      setLoadingData(false);
     }
     getHeroSettings();
   }, []);
@@ -56,9 +60,14 @@ export default function EditHeroPage() {
     try {
       setUploading(true);
       if (!e.target.files || e.target.files.length === 0) return;
-      const url = await uploadFile(e.target.files[0], folder);
+      const file = e.target.files[0];
+      if (file.size > MAX_SIZE) {
+        showToast('Ukuran file terlalu besar! Maksimal 2MB.', 'error');
+        return;
+      }
+      const url = await uploadFile(file, folder);
       setter(url);
-      showToast('Gambar berhasil diupload!', 'success');
+      showToast('File berhasil diupload! Klik "Simpan" untuk menyimpan.', 'info');
     } catch (err) {
       showToast(err.message, 'error');
     } finally {
@@ -99,7 +108,7 @@ export default function EditHeroPage() {
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
+    setTimeout(() => setToast(null), 4000);
   };
 
   const UploadBlock = ({ label, hint, value, setter, inputId, folder }) => (
@@ -107,17 +116,24 @@ export default function EditHeroPage() {
       <label>{label}</label>
       {hint && <p style={{ fontSize: '0.78rem', color: 'var(--slate-400)', marginBottom: '8px' }}>{hint}</p>}
       <div className={styles.uploadZone}>
-        <i className="bx bx-cloud-upload"></i>
-        <p>{uploading ? 'Sedang mengunggah...' : 'Klik untuk upload gambar baru'}</p>
+        {uploading ? (
+          <div className={styles.uploadSpinner}><i className="bx bx-loader-alt bx-spin"></i> Sedang mengupload...</div>
+        ) : (
+          <>
+            <i className="bx bx-cloud-upload"></i>
+            <p>Klik untuk upload gambar baru</p>
+            <span className={styles.uploadHint}>Format: JPG, PNG, WebP • Maks. 2MB</span>
+          </>
+        )}
         <input
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/png,image/webp"
           onChange={(e) => handleUploadFor(e, setter, folder)}
           disabled={uploading}
           style={{ display: 'none' }}
           id={inputId}
         />
-        <label htmlFor={inputId} style={{ cursor: 'pointer', position: 'absolute', inset: 0 }}></label>
+        <label htmlFor={inputId} style={{ cursor: uploading ? 'not-allowed' : 'pointer', position: 'absolute', inset: 0 }}></label>
       </div>
       {value && (
         <div className={styles.previewWrap}>
@@ -128,11 +144,20 @@ export default function EditHeroPage() {
     </div>
   );
 
+  if (loadingData) {
+    return (
+      <div className={styles.emptyState}>
+        <i className="bx bx-loader-alt bx-spin"></i>
+        <p>Memuat pengaturan hero...</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       {toast && (
-        <div className={`${styles.toast} ${toast.type === 'success' ? styles.success : styles.error}`}>
-          <i className={toast.type === 'success' ? 'bx bx-check-circle' : 'bx bx-error-circle'}></i>
+        <div className={`${styles.toast} ${toast.type === 'success' ? styles.success : toast.type === 'error' ? styles.error : styles.info}`}>
+          <i className={toast.type === 'success' ? 'bx bx-check-circle' : toast.type === 'error' ? 'bx bx-error-circle' : 'bx bx-info-circle'}></i>
           <span>{toast.message}</span>
         </div>
       )}
