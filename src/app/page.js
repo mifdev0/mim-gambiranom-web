@@ -346,7 +346,7 @@ export default async function Home() {
                 )}
               </div>
               <div class="guru-kepala-info">
-                <div class="badge"><i class="bx bxs-crown"></i> Kepala Madrasah</div>
+                <div class="badge"><i class="bx bxs-user-badge"></i> Kepala Madrasah</div>
                 <h3>{kepalaMadrasah.name}</h3>
                 <p>{kepalaMadrasah.bio}</p>
               </div>
