@@ -373,6 +373,29 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* INSTAGRAM */}
+      <section class="section instagram-sec" id="instagram">
+        <div class="container">
+          <div class="sec-head anim fade-up">
+            <div class="sec-label"><i class="bx bxl-instagram"></i> Media Sosial</div>
+            <h2>Ikuti Kami di Instagram</h2>
+            <p>Lihat kegiatan terbaru dan momen seru di MI Muhammadiyah Gambiranom.</p>
+          </div>
+          <div class="instagram-embed-wrap anim fade-up">
+            <iframe
+              src="https://www.instagram.com/p/DZPJUTgB2qm/embed"
+              width="400"
+              height="520"
+              frameBorder="0"
+              scrolling="no"
+              allowTransparency="true"
+              allow="encrypted-media"
+              title="Instagram Post MIM Gambiranom"
+            ></iframe>
+          </div>
+        </div>
+      </section>
+
       {/* CONTACT */}
       <section class="section contact-sec" id="kontak">
         <div class="container">

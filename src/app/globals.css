@@ -1014,6 +1014,32 @@ a {
   to { transform: translateX(-50%); }
 }
 
+/* ---------- INSTAGRAM EMBED ---------- */
+.instagram-sec {
+  background: var(--green-50);
+}
+
+.instagram-embed-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 0;
+}
+
+.instagram-embed-wrap iframe {
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  max-width: 100%;
+  background: #fff;
+}
+
+@media (max-width: 480px) {
+  .instagram-embed-wrap iframe {
+    width: 100% !important;
+    height: 560px;
+  }
+}
+
 /* ---------- CONTACT ---------- */
 .contact-sec {
   background: #fff;
