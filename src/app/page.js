@@ -6,7 +6,13 @@ const FALLBACK_HERO = {
   title: "Mendidik Generasi Qur'ani Berakhlak Mulia",
   highlight_text: "Qur'ani",
   description: "Sekolah Dasar Berbasis Agama di Desa Gambiranom, Kismantoro, Wonogiri. Menyelenggarakan pendidikan berlandaskan nilai-nilai Qur'an, mendampingi dan merangsang anak dalam pembelajaran baik di sekolah maupun di luar sekolah.",
-  image_url: "/img/hero.jpg"
+  image_url: "/img/hero.jpg",
+  hero_image_main: "/img/classroom.jpg",
+  hero_image_float1: "/img/tahfidz.jpg",
+  hero_image_float2: "/img/drumband.jpg",
+  stat_value: 155,
+  stat_label: "Siswa",
+  stat_sub_text: "Tahun Ajaran Aktif"
 };
 
 const FALLBACK_PROGRAMS = [
@@ -175,19 +181,19 @@ export default async function Home() {
 
             <div class="hero-visual">
               <div class="hero-img-main">
-                <img src="/img/classroom.jpg" alt="Suasana Kelas" />
+                <img src={hero.hero_image_main || '/img/classroom.jpg'} alt="Suasana Kelas" />
               </div>
               <div class="hero-img-float hero-img-float-1">
-                <img src="/img/tahfidz.jpg" alt="Tahfidz Qur'an" />
+                <img src={hero.hero_image_float1 || '/img/tahfidz.jpg'} alt="Foto Kegiatan 1" />
               </div>
               <div class="hero-img-float hero-img-float-2">
-                <img src="/img/drumband.jpg" alt="Drumband" />
+                <img src={hero.hero_image_float2 || '/img/drumband.jpg'} alt="Foto Kegiatan 2" />
               </div>
               <div class="hero-stat-card">
                 <div class="hero-stat-icon"><i class="bx bxs-group"></i></div>
                 <div>
-                  <strong>{dataMadrasah.find(d => d.label === 'Siswa')?.value || 155} Siswa</strong>
-                  <small>Tahun Ajaran Aktif</small>
+                  <strong>{hero.stat_value || 155} {hero.stat_label || 'Siswa'}</strong>
+                  <small>{hero.stat_sub_text || 'Tahun Ajaran Aktif'}</small>
                 </div>
               </div>
             </div>

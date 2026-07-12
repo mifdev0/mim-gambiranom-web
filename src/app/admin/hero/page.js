@@ -9,47 +9,55 @@ export default function EditHeroPage() {
   const [highlightText, setHighlightText] = useState('');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [heroImageMain, setHeroImageMain] = useState('');
+  const [heroImageFloat1, setHeroImageFloat1] = useState('');
+  const [heroImageFloat2, setHeroImageFloat2] = useState('');
+  const [statValue, setStatValue] = useState(155);
+  const [statLabel, setStatLabel] = useState('Siswa');
+  const [statSubText, setStatSubText] = useState('Tahun Ajaran Aktif');
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
     async function getHeroSettings() {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('hero_settings')
         .select('*')
         .eq('id', 1)
         .single();
-      
+
       if (data) {
-        setTitle(data.title);
-        setHighlightText(data.highlight_text);
-        setDescription(data.description);
-        setImageUrl(data.image_url);
+        setTitle(data.title || '');
+        setHighlightText(data.highlight_text || '');
+        setDescription(data.description || '');
+        setImageUrl(data.image_url || '');
+        setHeroImageMain(data.hero_image_main || '');
+        setHeroImageFloat1(data.hero_image_float1 || '');
+        setHeroImageFloat2(data.hero_image_float2 || '');
+        setStatValue(data.stat_value || 155);
+        setStatLabel(data.stat_label || 'Siswa');
+        setStatSubText(data.stat_sub_text || 'Tahun Ajaran Aktif');
       }
     }
     getHeroSettings();
   }, []);
 
-  const handleUpload = async (e) => {
+  const uploadFile = async (file, folder) => {
+    const ext = file.name.split('.').pop();
+    const path = `${folder}/${Math.random().toString(36).substring(2)}.${ext}`;
+    const { error } = await supabase.storage.from('uploads').upload(path, file);
+    if (error) throw error;
+    const { data } = supabase.storage.from('uploads').getPublicUrl(path);
+    return data.publicUrl;
+  };
+
+  const handleUploadFor = async (e, setter, folder) => {
     try {
       setUploading(true);
-      if (!e.target.files || e.target.files.length === 0) {
-        throw new Error('Pilih file gambar untuk diupload.');
-      }
-      const file = e.target.files[0];
-      const fileExt = file.name.split('.').pop();
-      const fileName = `hero_${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `hero/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('uploads')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage.from('uploads').getPublicUrl(filePath);
-      setImageUrl(data.publicUrl);
+      if (!e.target.files || e.target.files.length === 0) return;
+      const url = await uploadFile(e.target.files[0], folder);
+      setter(url);
       showToast('Gambar berhasil diupload!', 'success');
     } catch (err) {
       showToast(err.message, 'error');
@@ -70,6 +78,12 @@ export default function EditHeroPage() {
           highlight_text: highlightText,
           description,
           image_url: imageUrl,
+          hero_image_main: heroImageMain,
+          hero_image_float1: heroImageFloat1,
+          hero_image_float2: heroImageFloat2,
+          stat_value: parseInt(statValue),
+          stat_label: statLabel,
+          stat_sub_text: statSubText,
           updated_at: new Date()
         })
         .eq('id', 1);
@@ -88,6 +102,32 @@ export default function EditHeroPage() {
     setTimeout(() => setToast(null), 3000);
   };
 
+  const UploadBlock = ({ label, hint, value, setter, inputId, folder }) => (
+    <div className={styles.formGroup}>
+      <label>{label}</label>
+      {hint && <p style={{ fontSize: '0.78rem', color: 'var(--slate-400)', marginBottom: '8px' }}>{hint}</p>}
+      <div className={styles.uploadZone}>
+        <i className="bx bx-cloud-upload"></i>
+        <p>{uploading ? 'Sedang mengunggah...' : 'Klik untuk upload gambar baru'}</p>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => handleUploadFor(e, setter, folder)}
+          disabled={uploading}
+          style={{ display: 'none' }}
+          id={inputId}
+        />
+        <label htmlFor={inputId} style={{ cursor: 'pointer', position: 'absolute', inset: 0 }}></label>
+      </div>
+      {value && (
+        <div className={styles.previewWrap}>
+          <img src={value} className={styles.previewImg} alt="Preview" />
+          <code style={{ fontSize: '0.72rem', wordBreak: 'break-all', color: 'var(--slate-400)' }}>{value}</code>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div>
       {toast && (
@@ -97,68 +137,93 @@ export default function EditHeroPage() {
         </div>
       )}
 
-      <form onSubmit={handleSave} className={styles.adminForm}>
+      <form onSubmit={handleSave} className={styles.adminForm} style={{ maxWidth: '900px' }}>
+
+        {/* === KONTEN TEKS === */}
+        <h4 style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--green-700)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px', borderBottom: '1px solid var(--slate-200)', paddingBottom: '10px' }}>
+          <i className="bx bx-text" style={{ marginRight: '6px' }}></i> Konten Teks Hero
+        </h4>
+
         <div className={styles.formGroup}>
           <label>Judul Utama (Title)</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Mendidik Generasi Qur'ani Berakhlak Mulia"
-            required
-          />
+          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Mendidik Generasi Qur'ani Berakhlak Mulia" required />
         </div>
 
         <div className={styles.formGroup}>
           <label>Kata Kunci Highlight (Akan berwarna Gold/Emas)</label>
-          <input
-            type="text"
-            value={highlightText}
-            onChange={(e) => setHighlightText(e.target.value)}
-            placeholder="Qur'ani"
-            required
-          />
+          <input type="text" value={highlightText} onChange={(e) => setHighlightText(e.target.value)} placeholder="Qur'ani" required />
         </div>
 
         <div className={styles.formGroup}>
           <label>Deskripsi Paragraf</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Tulis penjelasan singkat tentang sekolah..."
-            required
+          <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Tulis penjelasan singkat tentang sekolah..." required />
+        </div>
+
+        {/* === FOTO-FOTO === */}
+        <h4 style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--green-700)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px', marginTop: '36px', borderBottom: '1px solid var(--slate-200)', paddingBottom: '10px' }}>
+          <i className="bx bx-image" style={{ marginRight: '6px' }}></i> Foto-Foto Hero Section
+        </h4>
+
+        <UploadBlock
+          label="Foto Background Utama (Latar Belakang)"
+          hint="Gambar layar penuh di belakang hero section"
+          value={imageUrl}
+          setter={setImageUrl}
+          inputId="heroUpBg"
+          folder="hero"
+        />
+
+        <UploadBlock
+          label="Foto Utama Besar (Kanan Atas)"
+          hint="Foto besar yang tampil di sisi kanan hero, misal suasana kelas"
+          value={heroImageMain}
+          setter={setHeroImageMain}
+          inputId="heroUpMain"
+          folder="hero"
+        />
+
+        <div className={styles.formGrid}>
+          <UploadBlock
+            label="Foto Kecil Kiri Bawah"
+            hint="Foto floating kecil di kiri bawah"
+            value={heroImageFloat1}
+            setter={setHeroImageFloat1}
+            inputId="heroUpFloat1"
+            folder="hero"
+          />
+          <UploadBlock
+            label="Foto Kecil Kanan Atas"
+            hint="Foto floating kecil di kanan atas"
+            value={heroImageFloat2}
+            setter={setHeroImageFloat2}
+            inputId="heroUpFloat2"
+            folder="hero"
           />
         </div>
 
-        <div className={styles.formGroup}>
-          <label>Foto Background Hero</label>
-          <div className={styles.uploadZone}>
-            <i className="bx bx-cloud-upload"></i>
-            <p>{uploading ? 'Sedang mengunggah...' : 'Klik untuk upload gambar baru'}</p>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleUpload}
-              disabled={uploading}
-              style={{ display: 'none' }}
-              id="heroImageInput"
-            />
-            <label htmlFor="heroImageInput" style={{ cursor: 'pointer', position: 'absolute', inset: 0 }}></label>
-          </div>
+        {/* === STATISTIK CARD === */}
+        <h4 style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--green-700)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px', marginTop: '36px', borderBottom: '1px solid var(--slate-200)', paddingBottom: '10px' }}>
+          <i className="bx bx-bar-chart-alt-2" style={{ marginRight: '6px' }}></i> Kartu Statistik Melayang
+        </h4>
 
-          {imageUrl && (
-            <div className={styles.previewWrap}>
-              <img src={imageUrl} className={styles.previewImg} alt="Hero Preview" />
-              <div>
-                <p style={{ fontSize: '0.8rem', color: 'var(--slate-500)' }}>URL Gambar Saat Ini:</p>
-                <code style={{ fontSize: '0.75rem', wordBreak: 'break-all' }}>{imageUrl}</code>
-              </div>
-            </div>
-          )}
+        <div className={styles.formGrid}>
+          <div className={styles.formGroup}>
+            <label>Angka Statistik</label>
+            <input type="number" value={statValue} onChange={(e) => setStatValue(e.target.value)} placeholder="155" min="0" required />
+          </div>
+          <div className={styles.formGroup}>
+            <label>Label Statistik (setelah angka)</label>
+            <input type="text" value={statLabel} onChange={(e) => setStatLabel(e.target.value)} placeholder="Siswa" required />
+          </div>
         </div>
 
-        <button type="submit" className={`${styles.btnAction} ${styles.primary}`} disabled={saving}>
-          {saving ? <><i className="bx bx-loader-alt bx-spin"></i> Menyimpan...</> : 'Simpan Perubahan'}
+        <div className={styles.formGroup}>
+          <label>Sub-Teks Kecil (di bawah angka)</label>
+          <input type="text" value={statSubText} onChange={(e) => setStatSubText(e.target.value)} placeholder="Tahun Ajaran Aktif" required />
+        </div>
+
+        <button type="submit" className={`${styles.btnAction} ${styles.primary}`} disabled={saving} style={{ marginTop: '12px' }}>
+          {saving ? <><i className="bx bx-loader-alt bx-spin"></i> Menyimpan...</> : 'Simpan Semua Perubahan'}
         </button>
       </form>
     </div>
