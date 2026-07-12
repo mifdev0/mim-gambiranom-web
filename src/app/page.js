@@ -59,7 +59,20 @@ const FALLBACK_SETTINGS = {
   address: 'Dusun Gambiran, RT 02 RW 01, Desa Gambiranom, Kismantoro, Wonogiri',
   work_hours: 'Senin - Sabtu, 07.00 - 14.00 WIB',
   phone: '081335138666',
-  school_name: 'MIM Gambiranom'
+  school_name: 'MIM Gambiranom',
+  instagram_post_url: 'https://www.instagram.com/p/DZPJUTgB2qm/'
+};
+
+const getInstagramEmbedUrl = (url) => {
+  if (!url) return 'https://www.instagram.com/p/DZPJUTgB2qm/embed';
+  let cleanUrl = url.split('?')[0];
+  if (!cleanUrl.endsWith('/')) {
+    cleanUrl += '/';
+  }
+  if (!cleanUrl.endsWith('embed/')) {
+    cleanUrl += 'embed/';
+  }
+  return cleanUrl;
 };
 
 export const revalidate = 0; // Disable server cache for dynamic real-time dashboard updates
@@ -383,7 +396,7 @@ export default async function Home() {
           </div>
           <div class="instagram-embed-wrap anim fade-up">
             <iframe
-              src="https://www.instagram.com/p/DZPJUTgB2qm/embed"
+              src={getInstagramEmbedUrl(settings.instagram_post_url)}
               width="400"
               height="520"
               frameBorder="0"

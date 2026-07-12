@@ -15,6 +15,7 @@ export default function AdminSettingsPage() {
   const [address, setAddress] = useState('');
   const [workHours, setWorkHours] = useState('');
   const [phone, setPhone] = useState('');
+  const [instagramPostUrl, setInstagramPostUrl] = useState('');
 
   useEffect(() => {
     fetchSettings();
@@ -30,6 +31,7 @@ export default function AdminSettingsPage() {
           if (s.key === 'address') setAddress(s.value);
           if (s.key === 'work_hours') setWorkHours(s.value);
           if (s.key === 'phone') setPhone(s.value);
+          if (s.key === 'instagram_post_url') setInstagramPostUrl(s.value);
         });
       }
     } catch (err) {
@@ -53,7 +55,8 @@ export default function AdminSettingsPage() {
       { key: 'school_tagline', value: schoolTagline },
       { key: 'address', value: address },
       { key: 'work_hours', value: workHours },
-      { key: 'phone', value: phone }
+      { key: 'phone', value: phone },
+      { key: 'instagram_post_url', value: instagramPostUrl }
     ];
 
     try {
@@ -134,6 +137,19 @@ export default function AdminSettingsPage() {
               required
             />
           </div>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>Link Postingan Instagram Utama (Embed)</label>
+          <input
+            type="url"
+            value={instagramPostUrl}
+            onChange={(e) => setInstagramPostUrl(e.target.value)}
+            placeholder="Contoh: https://www.instagram.com/p/DZPJUTgB2qm/"
+          />
+          <p style={{ fontSize: '0.75rem', color: 'var(--slate-400)', marginTop: '4px' }}>
+            Masukkan URL postingan Instagram sekolah yang ingin ditampilkan sebagai unggulan di halaman depan.
+          </p>
         </div>
 
         <button type="submit" className={`${styles.btnAction} ${styles.primary}`} disabled={saving}>
