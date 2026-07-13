@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { convertToWebP } from '@/lib/imageConverter';
 import styles from '../adminPage.module.css';
 
 export default function AdminGuruPage() {
@@ -89,12 +90,20 @@ export default function AdminGuruPage() {
     try {
       setUploading(true);
       if (!e.target.files || e.target.files.length === 0) return;
-      const file = e.target.files[0];
+      let file = e.target.files[0];
       const MAX_SIZE = 2 * 1024 * 1024;
       if (file.size > MAX_SIZE) {
         showToast('Ukuran file terlalu besar! Maksimal 2MB.', 'error');
         return;
       }
+
+      // Convert to WebP client-side
+      try {
+        file = await convertToWebP(file);
+      } catch (convErr) {
+        console.warn('Gagal konversi ke WebP, menggunakan file asli:', convErr);
+      }
+
       const ext = file.name.split('.').pop();
       const path = `guru/${Math.random().toString(36).substring(2)}.${ext}`;
 

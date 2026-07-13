@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { convertToWebP } from '@/lib/imageConverter';
 import styles from '../adminPage.module.css';
 
 const MAX_SIZE = 2 * 1024 * 1024; // 2MB
@@ -60,11 +61,20 @@ export default function EditHeroPage() {
     try {
       setUploading(true);
       if (!e.target.files || e.target.files.length === 0) return;
-      const file = e.target.files[0];
+      
+      let file = e.target.files[0];
       if (file.size > MAX_SIZE) {
         showToast('Ukuran file terlalu besar! Maksimal 2MB.', 'error');
         return;
       }
+
+      // Convert to WebP client-side
+      try {
+        file = await convertToWebP(file);
+      } catch (convErr) {
+        console.warn('Gagal konversi ke WebP, menggunakan file asli:', convErr);
+      }
+
       const url = await uploadFile(file, folder);
       setter(url);
       showToast('File berhasil diupload! Klik "Simpan" untuk menyimpan.', 'info');
